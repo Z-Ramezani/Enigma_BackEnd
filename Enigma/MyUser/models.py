@@ -36,8 +36,6 @@ class MyUser(AbstractBaseUser):
     telegram_id = models.CharField(max_length=50, default='', blank=True)
     whatsapp_id = models.CharField(max_length=50, default='', blank=True)
     """
-
-
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -46,6 +44,10 @@ class MyUser(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    """
+    groupID = models.ForeignKey(members, related_name='group_member', on_delete=models.CASCADE)
+
+    """
 
     def has_perm(self, perm, obj=None):
         return True
