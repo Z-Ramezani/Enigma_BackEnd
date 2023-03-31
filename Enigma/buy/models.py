@@ -9,6 +9,7 @@ class buy(models.Model):
     groupID = models.ForeignKey(
         Group, related_name='groupID', on_delete=models.CASCADE)
     cost = models.BigIntegerField()
+    date = models.DateField()
 
 
 class buyer(models.Model):
