@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'MyUser',
     'rest_framework', 
     'rest_framework.authtoken',
     "corsheaders",
@@ -46,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount', 
     'rest_auth.registration',
+    'MyUser.apps.MyuserConfig',
 
 ]
 #'django.contrib.sites',
@@ -137,3 +137,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'MyUser.MyUser'

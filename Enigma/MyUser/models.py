@@ -18,8 +18,8 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password, **kwargs):
-        u = self.create_user(email, password, **kwargs)
+    def create_superuser(self, email,username, password, **kwargs):
+        u = self.create_user(email, username ,password, **kwargs)
         u.is_admin = True
         u.is_active = True
         u.save(using=self._db)
@@ -30,19 +30,15 @@ class MyUser(AbstractBaseUser):
 
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=255, unique=True)
-    picture = models.ImageField(upload_to='user/profile/', blank=True)
-    """
-    phone_number = models.CharField(max_length=50, default='', blank=True)
-    telegram_id = models.CharField(max_length=50, default='', blank=True)
-    whatsapp_id = models.CharField(max_length=50, default='', blank=True)
-    """
+    username = models.CharField(max_length=255)
+    picture_id = models.IntegerField(blank=False, default=0)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', 'picture_id']
 
     """
     groupID = models.ForeignKey(members, related_name='group_member', on_delete=models.CASCADE)
