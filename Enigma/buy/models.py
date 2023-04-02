@@ -18,13 +18,24 @@ class buyer(models.Model):
     buy = models.ForeignKey(buy, related_name='Buyers',
                             on_delete=models.CASCADE)
     userID = models.ForeignKey(
-        MyUser, related_name='userID', on_delete=models.CASCADE)
+        MyUser, related_name='userID_buy', on_delete=models.CASCADE)
     percent = models.IntegerField()
+    added_by = models.IntegerField(null=False)
 
 
 class consumer(models.Model):
     consum = models.ForeignKey(
         buy, related_name='consumers', on_delete=models.CASCADE)
     userID = models.ForeignKey(
-        MyUser, related_name='userID', on_delete=models.CASCADE)
+        MyUser, related_name='userID_cons', on_delete=models.CASCADE)
+    percent = models.IntegerField()
+
+
+class consum_contrib(models.Model):
+    contrib = models.ForeignKey(consumer, on_delete=models.CASCADE)
+    percent = models.IntegerField()
+
+
+class buyer_contrib(models.Model):
+    contrib = models.ForeignKey(buyer, on_delete=models.CASCADE)
     percent = models.IntegerField()
