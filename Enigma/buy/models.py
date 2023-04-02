@@ -1,3 +1,4 @@
+from operator import mod
 from django.db import models
 from Group.models import Group
 
@@ -10,6 +11,7 @@ class buy(models.Model):
         Group, related_name='groupID', on_delete=models.CASCADE)
     cost = models.BigIntegerField()
     date = models.DateField()
+    picture_id = models.IntegerField(blank=False, default=0)
 
 
 class buyer(models.Model):
