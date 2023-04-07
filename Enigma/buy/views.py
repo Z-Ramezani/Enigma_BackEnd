@@ -1,5 +1,3 @@
-from datetime import date
-from tokenize import group
 from urllib import response
 from rest_framework.views import APIView
 

@@ -1,4 +1,3 @@
-from asyncore import read
 from rest_framework import serializers
 from buy.models import buyer, consumer, buy
 
