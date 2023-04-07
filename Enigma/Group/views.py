@@ -1,18 +1,17 @@
 from urllib import response
 from rest_framework.views import APIView
 
-from Group.models import buy
-from buy.serializers import buySerializer 
+from Group.models import Group
+from Group.serializers import GroupSerializer
 
-class Group(APIView):
+
+class GroupView(APIView):
 
     def GroupInfo(self, request):
-        perch = buy.objects.filter( groupID=request.data['groupID'] ).values()
-        perchase = buySerializer(instance=perch, many=True)
-        return response(perchase)
+        inf = Group.objects.filter(groupID=request.data['groupID']).values()
+        info = GroupSerializer(instance=inf, many=True)
+        return response(info)
 
     def Delete_Group(self, request):
-        perch = buy.objects.filter( groupID=request.data['groupID'] ).
-        perchase = buySerializer(instance=perch, many=True)
-        return response(perchase)
-
+        dele = Group.objects.filter(groupID=request.data['groupID']).delete()
+        return response("done")
