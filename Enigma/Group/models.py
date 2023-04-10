@@ -6,12 +6,9 @@ from MyUser.models import MyUser
 
 class Group(models.Model):
 
-<<<<<<< Updated upstream
+
     name = models.CharField(max_length=100, null=True)
-=======
-    name = models.CharField(max_length=50, null=True)
     description = models.TextField(blank=True, null=True)
->>>>>>> Stashed changes
     currency = models.CharField(max_length=100, default="تومان")
 
 
