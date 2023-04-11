@@ -4,5 +4,8 @@ from . import views
 app_name = 'Group'
 urlpatterns = [
 
-    path('Group_Info', views.Buys.as_view(), name='group_info'),
+    path('GroupInfo', views.GroupInfo.as_view(), name='GroupInfo'),
+    path('DeleteGroup', views.DeleteGroup.as_view(), name='DeleteGroup'),
+    path('ShowMembers', views.ShowMembers.as_view(), name='ShowMembers'),
+
 ]

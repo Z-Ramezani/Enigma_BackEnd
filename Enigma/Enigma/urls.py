@@ -21,6 +21,7 @@ from django.urls import path, include, re_path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('auth/', include('MyUser.urls')),
-    path('buys/', include('buy.urls')),
+    path('buy/', include('buy.urls')),
+    path('group/', include('Group.urls')),
 
 ]
