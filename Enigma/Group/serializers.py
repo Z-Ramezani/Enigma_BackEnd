@@ -11,11 +11,16 @@ class GroupSerializer(serializers.ModelSerializer):
         return new_group
 
 
-class MembersSerializer(serializers.ModelSerializer):
-    userID = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    groupID = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class MembersSerializer(serializers.Serializer):
+    emails = serializers.ListField(child=serializers.EmailField())
+    groupID = serializers.IntegerField()
 
-    class Meta:
-        model = Members
-        fields = "__all__"
+    # userID = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='userID'
+    # )
+    # class Meta:
+    #     model = Members
+    #     fields = ["userID"]
 

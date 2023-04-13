@@ -17,13 +17,26 @@ class AddUserGroup(APIView):
     permission_classes = [
         permissions.AllowAny
     ]
-    serializer_class = MembersSerializer
-
     def post(self, request):
-        for user in MyUser.objects.all():
-            #usr = MyUser.objects.filter(email=request.data['email']).values()
-            if user.email == request.data['email']:
-                user.save()
+        serializer_data = MembersSerializer(data=request.data)
+
+        if serializer_data.is_valid():
+            print(request.data['emails'])
+            print("------------------------------------------------------------------")
+            for emailUser in request.data['emails']:
+                user = MyUser.objects.get(email=emailUser)
+                print(user)
+                print(type(user))
+                print("------------------------------------------------------------------")
+                group = Group.objects.get(id=request.data['groupID'])
+                member = Members(groupID=group, userID=user)
+                print(member)
+                print("------------------------------------------------------------------")
+                member.save()
+            return Response(status=status.HTTP_200_OK)
+        massage = {"massage":"ایمیل درست نیست"}
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=massage)
+
 
 class DeleteGroup(APIView):
     permission_classes = [
@@ -36,3 +49,8 @@ class DeleteGroup(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+
+
+# {
+#   "emails":["maryam.shafizadegan.8098@gmail.com", "flowerfatmi5@gmail.com"]
+# }
