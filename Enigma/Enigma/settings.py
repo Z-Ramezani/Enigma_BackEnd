@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount', 
     'rest_auth.registration',
     'MyUser.apps.MyuserConfig',
+    'Group.apps.GroupConfig'
 
 ]
 #'django.contrib.sites',
