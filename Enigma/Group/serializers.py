@@ -24,3 +24,8 @@ class MembersSerializer(serializers.Serializer):
     #     model = Members
     #     fields = ["userID"]
 
+class AmountDebtandCreditMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = "__all__"
+

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Group, Members
-from .serializers import GroupSerializer, MembersSerializer
+from .serializers import GroupSerializer, MembersSerializer, AmountDebtandCreditMemberSerializer
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework import status
@@ -47,8 +47,9 @@ class AddUserGroup(APIView):
                 print("------------------------------------------------------------------")
                 member.save()
             return Response(status=status.HTTP_200_OK)
-        massage = {"massage":"ایمیل درست نیست"}
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=massage)
+        #massage = {"massage":"ایمیل درست نیست"}
+        #return Response(status=status.HTTP_400_BAD_REQUEST, data=massage)
+        return Response(serializer_data.errors)
 
 
 class DeleteGroup(APIView):
@@ -60,6 +61,17 @@ class DeleteGroup(APIView):
     def post(self, request):
         Group.objects.filter(groupID=request.data['id']).delete()
         return Response(status=status.HTTP_200_OK)
+    
+class AmountofDebtandCredit(APIView):
+    permission_classes = [
+        permissions.AllowAny
+    ]
+
+    # def post(self, request):
+    #     serializer_data = AmountDebtandCreditMemberSerializer(data=request.data)
+    #     if serializer_data.is_valid():
+
+
 
 
 
