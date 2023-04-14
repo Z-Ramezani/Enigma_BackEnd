@@ -11,7 +11,20 @@ class CreateGroup(APIView):
     permission_classes = [
         permissions.AllowAny
     ]
-    serializer_class = GroupSerializer
+
+    def post(self, request):
+        serializer_data = GroupSerializer(data=request.data)
+        print(serializer_data)
+        print(type(serializer_data))
+        print("------------------------------------------------------------------")
+        if serializer_data.is_valid():
+            new_group = serializer_data.save()
+            print(new_group)
+            print(type(new_group))
+            print("------------------------------------------------------------------")
+            group_id = new_group.id
+            return Response(group_id)
+        return Response(serializer_data.errors)
 
 class AddUserGroup(APIView):
     permission_classes = [
@@ -49,6 +62,12 @@ class DeleteGroup(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+
+# {
+#   "name":"گروه دوستان",
+#   "description":"دوستان دانشگاهی",
+#   "currency":"تومان"
+# }
 
 
 # {
