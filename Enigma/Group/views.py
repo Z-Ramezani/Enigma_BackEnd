@@ -33,11 +33,15 @@ class ShowMembers(APIView):
         print("_________________________________________________________________")
 
         if serializer_data.is_valid():
-            group = members.objects.filter(groupID=request.data['groupID']).values()
+            group = members.objects.filter(groupID=request.data['groupID'])
             print(group)
             print(type(group))
+            for member_info in group:
+                print(member_info)
+                print(type(member_info))
+                print(member_info.userID)
             print("_________________________________________________________________")
-            return Response(group)
+            return Response("KK")
         return Response(serializer_data.errors)
     
     # def post(self, request):

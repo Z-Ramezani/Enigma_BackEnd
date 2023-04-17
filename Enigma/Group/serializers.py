@@ -17,7 +17,7 @@ class showMembersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = members
-        fields = "__all__"
+        fields = ["groupID"]
 
 
 class GroupSerializer(serializers.ModelSerializer):
