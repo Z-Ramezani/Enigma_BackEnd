@@ -1,6 +1,5 @@
 from rest_framework import status
 from rest_framework.response import Response
-from urllib import response
 from rest_framework.views import APIView
 from Group.models import Group, members
 from Group.serializers import GroupSerializer, showMembersSerializer
@@ -17,8 +16,8 @@ class GroupInfo(APIView):
 class DeleteGroup(APIView):
 
     def post(self, request):
-        dele = Group.objects.filter(groupID=request.data['id']).delete()
-        return response(status=status.HTTP_200_OK)
+        dele = Group.objects.filter(id=request.data['id']).delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class ShowMembers(APIView):
