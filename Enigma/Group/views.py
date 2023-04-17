@@ -67,9 +67,10 @@ class AmountofDebtandCredit(APIView):
         permissions.AllowAny
     ]
 
-    # def post(self, request):
-    #     serializer_data = AmountDebtandCreditMemberSerializer(data=request.data)
-    #     if serializer_data.is_valid():
+    def post(self, request):
+        serializer_data = AmountDebtandCreditMemberSerializer(data=request.data)
+        if serializer_data.is_valid():
+            
 
 
 
