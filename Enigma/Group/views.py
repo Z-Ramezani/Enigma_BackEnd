@@ -22,36 +22,14 @@ class DeleteGroup(APIView):
 
 
 class ShowMembers(APIView):
-    
     def post(self, request):
-        print(request.data['groupID'])
-        print("_________________________________________________________________")
-
         serializer_data = showMembersSerializer(data=request.data)
-        print(serializer_data)
-        print(serializer_data.is_valid())
-        print("_________________________________________________________________")
 
         if serializer_data.is_valid():
-            group = members.objects.filter(groupID=request.data['groupID'])
-            print(group)
-            print(type(group))
-            for member_info in group:
-                print(member_info)
-                print(type(member_info))
-                print(member_info.userID)
-            print("_________________________________________________________________")
-            return Response("KK")
+            gro = members.objects.filter(groupID=request.data['groupID'])
+            listmember = []
+            for member in gro:
+                listmember.append(
+                    [member.userID.username, member.userID.picture_id])
+            return Response(listmember)
         return Response(serializer_data.errors)
-    
-    # def post(self, request):
-    #     inf_member = members.objects.filter(
-    #         groupID=request.data['groupID']).values()
-    #     print(inf_member)
-    #     info_member = membersSerializer(instance=inf_member, many=True)
-    #     print("__________________________________________________________")
-    #     print(info_member)
-    #     print("__________________________________________________________")
-    #     print(info_member.data)
-
-    #     return Response(info_member.data)
