@@ -11,6 +11,14 @@ class membersSerializer(serializers.ModelSerializer):
         model = members
         fields = "__all__"
 
+class showMembersSerializer(serializers.ModelSerializer):
+    # userID = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # groupID = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = members
+        fields = "__all__"
+
 
 class GroupSerializer(serializers.ModelSerializer):
     #members = membersSerializer(many=True)
