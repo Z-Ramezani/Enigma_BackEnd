@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from MyUser.models import MyUser
+from buy.models import buyer, consumer
 
 class CreateGroup(APIView):
     permission_classes = [
@@ -70,7 +71,26 @@ class AmountofDebtandCredit(APIView):
     def post(self, request):
         serializer_data = AmountDebtandCreditMemberSerializer(data=request.data)
         if serializer_data.is_valid():
+            list_buyer = buyer.objects.filter(userID = request.data['userID'])
+            list_consumer = consumer.objects.filter(userID = request.data['userID'])
+
+            print(list_buyer)
+            print("_______________________________________________________")
+            print(list_consumer)
+            print("_______________________________________________________")
+
+            sum = 0
+            # for buyer in list_buyer:
+            #     print(buyer.data)
+            #     sum += buyer.percent
             
+            # for consumer in list_consumer:
+            #     print(consumer.data)
+            #     sum -= consumer.percent
+
+            return Response("KKK")
+        return Response(serializer_data.errors)
+
 
 
 
