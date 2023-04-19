@@ -1,4 +1,3 @@
-from locale import currency
 from django.db import models
 
 from MyUser.models import MyUser
