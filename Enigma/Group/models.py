@@ -1,4 +1,3 @@
-from locale import currency
 from django.db import models
 
 from MyUser.models import MyUser
@@ -15,6 +14,6 @@ class Group(models.Model):
 class members(models.Model):
     groupID = models.ForeignKey(
         Group, related_name='group', on_delete=models.CASCADE)
-    
+
     userID = models.ForeignKey(
-        MyUser, related_name='member', on_delete=models.CASCADE)
+        MyUser, related_name='member', on_delete=models.CASCADE, null=True)
