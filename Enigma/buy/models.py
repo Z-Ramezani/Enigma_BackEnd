@@ -27,7 +27,7 @@ class buyer(models.Model):
 
 
 class consumer(models.Model):
-    consum = models.ForeignKey(   #esm avas shavad
+    consum = models.ForeignKey(                                       #esm avas shavad
         buy, related_name='consumers', on_delete=models.CASCADE)
     userID = models.ForeignKey(
         MyUser, related_name='userID_cons', on_delete=models.CASCADE)

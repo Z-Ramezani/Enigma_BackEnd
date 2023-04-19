@@ -80,15 +80,13 @@ class AmountofDebtandCredit(APIView):
             print("_______________________________________________________")
 
             sum = 0
-            # for buyer in list_buyer:
-            #     print(buyer.data)
-            #     sum += buyer.percent
+            for buy in list_buyer:
+                sum += buy.percent
             
-            # for consumer in list_consumer:
-            #     print(consumer.data)
-            #     sum -= consumer.percent
+            for buy in list_consumer:
+                sum -= buy.percent
 
-            return Response("KKK")
+            return Response(sum)
         return Response(serializer_data.errors)
 
 

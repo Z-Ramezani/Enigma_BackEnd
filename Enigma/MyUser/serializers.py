@@ -26,3 +26,8 @@ class MyUserSerializer(serializers.ModelSerializer):
         if get_user_model().objects.filter(email=value.lower()).exists():
             raise serializers.ValidationError("email exists.")
         return value
+    
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = ("username", "password", "picture_id")
