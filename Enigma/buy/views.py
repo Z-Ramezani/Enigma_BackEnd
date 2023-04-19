@@ -5,7 +5,7 @@ from buy.models import buy
 from buy.serializers import BuySerializer
 
 
-class (APIView):
+class GetGroupBuys(APIView):
 
     def post(self, request):
         perch = buy.objects.filter(
