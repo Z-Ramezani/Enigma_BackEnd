@@ -1,32 +1,42 @@
 from rest_framework import serializers
-from buy.models import buyer, consumer, buy
+from Group.models import Group
+from MyUser.models import MyUser
+from .models import buy, buyer, consumer
 
-
-from rest_framework import serializers
-from .models import Group, buy, buyer, consumer
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = '__all__'
 
-class BuySerializer(serializers.ModelSerializer):
-    groupID = GroupSerializer()
-    
+
+class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = buy
-        fields = '__all__'
+        model = MyUser
+        fields = ['username', 'picture_id']
+
 
 class BuyerSerializer(serializers.ModelSerializer):
-    buy = BuySerializer()
-    
+    userID = MyUserSerializer()
+
     class Meta:
         model = buyer
-        fields = '__all__'
+        fields = ['userID', 'percent']
+
 
 class ConsumerSerializer(serializers.ModelSerializer):
-    buy = BuySerializer()
-    
+    userID = MyUserSerializer()
+
     class Meta:
         model = consumer
-        fields = '__all__'
+        fields = ['userID', 'percent']
+
+
+class BuySerializer(serializers.ModelSerializer):
+    Buyers = BuyerSerializer(many=True, read_only=True)
+    consumers = ConsumerSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = buy
+        fields = ['cost', 'date', 'picture_id',
+                  'added_by', 'Buyers', 'consumers']
