@@ -17,6 +17,13 @@ class ShowMembers(APIView):
             group = Group.objects.get(id=group_id)
             member = members.objects.filter(groupID=group)
             serializer = MemberSerializer(member, many=True)
+                                      # Update each member's cost
+            #for member in serializer.data:
+                #member_id = member['id']
+                                       # Call dobet function to get cost for this member
+                #cost = dobet(member_id)
+                #member['cost'] = cost
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
             return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
@@ -40,5 +47,10 @@ class GroupInfo(APIView):
 class DeleteGroup(APIView):
 
     def post(self, request):
-        dele = Group.objects.filter(id=request.data['id']).delete()
-        return Response(status=status.HTTP_200_OK)
+        try:
+            dele = Group.objects.filter(id=request.data['groupID']).delete()
+            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
