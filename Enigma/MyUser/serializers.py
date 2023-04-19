@@ -55,3 +55,8 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+    
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = ("username", "password", "picture_id")
