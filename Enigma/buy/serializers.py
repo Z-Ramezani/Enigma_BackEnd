@@ -1,18 +1,32 @@
 from rest_framework import serializers
 from buy.models import buyer, consumer, buy
 
-class buyerSerializer(serializers.ModelSerializer):
-    categories = serializers.RelatedField(many=True, read_only=True)
-    actions = serializers.RelatedField(many=True, read_only=True)
 
+from rest_framework import serializers
+from .models import Group, buy, buyer, consumer
+
+class GroupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Filter
-        fields = "__all__"
+        model = Group
+        fields = '__all__'
 
-
-class buySerializer(serializers.ModelSerializer):
-    buyers = buyerSerializer(many=True, read_only=True)
-
+class BuySerializer(serializers.ModelSerializer):
+    groupID = GroupSerializer()
+    
     class Meta:
-        model = ServicesComponents
-        fields = ('target_id','name','exported', 'permissionName','filterCheck', 'filters')
+        model = buy
+        fields = '__all__'
+
+class BuyerSerializer(serializers.ModelSerializer):
+    buy = BuySerializer()
+    
+    class Meta:
+        model = buyer
+        fields = '__all__'
+
+class ConsumerSerializer(serializers.ModelSerializer):
+    buy = BuySerializer()
+    
+    class Meta:
+        model = consumer
+        fields = '__all__'
