@@ -17,7 +17,7 @@ class MemberSerializer(serializers.ModelSerializer):
     userID = MyUserSerializer(read_only=True)
 
     class Meta:
-        model = members
+        model = Members
         fields = '__all__'
         fields = "__all__"
 
