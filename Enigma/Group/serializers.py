@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import MyUser, Group, members
+from .models import MyUser, Group, Members
 
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,3 +19,28 @@ class MemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = members
         fields = '__all__'
+        fields = "__all__"
+
+    def create(self, validated_data):
+        new_group = Group.objects.create(**validated_data)
+        return new_group
+
+
+class MembersSerializer(serializers.Serializer):
+    emails = serializers.ListField(child=serializers.EmailField())
+    groupID = serializers.IntegerField()
+
+    # userID = serializers.SlugRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     slug_field='userID'
+    # )
+    # class Meta:
+    #     model = Members
+    #     fields = ["userID"]
+
+class AmountDebtandCreditMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = "__all__"
+

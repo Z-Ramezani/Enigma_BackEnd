@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.db import models, IntegrityError
+
 from rest_framework.exceptions import ValidationError
 
 
@@ -17,8 +18,8 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password, **kwargs):
-        u = self.create_user(email, username, password, **kwargs)
+    def create_superuser(self, email,username, password, **kwargs):
+        u = self.create_user(email, username ,password, **kwargs)
         u.is_admin = True
         u.is_active = True
         u.save(using=self._db)
@@ -38,6 +39,11 @@ class MyUser(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'picture_id']
+
+    """
+    groupID = models.ForeignKey(members, related_name='group_member', on_delete=models.CASCADE)
+
+    """
 
     def has_perm(self, perm, obj=None):
         return True

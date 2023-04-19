@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'MyUser.apps.MyuserConfig',
     'buy.apps.BuyConfig',
     'Group.apps.GroupConfig',
-
-
 ]
 # 'django.contrib.sites',
 

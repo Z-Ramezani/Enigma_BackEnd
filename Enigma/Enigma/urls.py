@@ -23,5 +23,4 @@ urlpatterns = [
     path('auth/', include('MyUser.urls')),
     path('buy/', include('buy.urls')),
     path('group/', include('Group.urls')),
-
 ]
