@@ -1,5 +1,3 @@
-from operator import mod
-from statistics import mode
 from django.db import models
 from Group.models import Group
 
@@ -15,6 +13,7 @@ class buy(models.Model):
     cost = models.BigIntegerField()
     date = models.IntegerField()
     picture_id = models.IntegerField(blank=False, default=0)
+    added_by = models.IntegerField(null=False)
 
 
 class buyer(models.Model):
@@ -22,21 +21,12 @@ class buyer(models.Model):
                             on_delete=models.CASCADE)
     userID = models.ForeignKey(
         MyUser, related_name='userID_buy', on_delete=models.CASCADE)
-    added_by = models.IntegerField(null=False)
-
-
-class consumer(models.Model):
-    consum = models.ForeignKey(
-        buy, related_name='consumers', on_delete=models.CASCADE)
-    userID = models.ForeignKey(
-        MyUser, related_name='userID_cons', on_delete=models.CASCADE)
-
-
-class consum_contrib(models.Model):
-    consumeID = models.ForeignKey(consumer, on_delete=models.CASCADE)
     percent = models.FloatField()
 
 
-class buyer_contrib(models.Model):
-    buyerID = models.ForeignKey(buyer, on_delete=models.CASCADE)
+class consumer(models.Model):
+    buy = models.ForeignKey(
+        buy, related_name='consumers', on_delete=models.CASCADE)
+    userID = models.ForeignKey(
+        MyUser, related_name='userID_cons', on_delete=models.CASCADE)
     percent = models.FloatField()

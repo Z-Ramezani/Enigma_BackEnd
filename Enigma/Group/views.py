@@ -2,9 +2,25 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Group.models import Group, members
-from Group.serializers import GroupSerializer, showMembersSerializer
+from Group.serializers import GroupSerializer
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import MemberSerializer
 
+class ShowMembers(APIView):
+ def post(self, request):
+        try:
+            group_id = request.data.get('groupID')
+            group = Group.objects.get(id=group_id)
+            member = members.objects.filter(groupID=group)
+            serializer = MemberSerializer(member, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class GroupInfo(APIView):
 
     def post(self, request):
@@ -20,15 +36,3 @@ class DeleteGroup(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class ShowMembers(APIView):
-    def post(self, request):
-        serializer_data = showMembersSerializer(data=request.data)
-
-        if serializer_data.is_valid():
-            gro = members.objects.filter(groupID=request.data['groupID'])
-            listmember = []
-            for member in gro:
-                listmember.append(
-                    [member.userID.username, member.userID.picture_id])
-            return Response(listmember)
-        return Response(serializer_data.errors)

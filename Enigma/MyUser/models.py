@@ -40,10 +40,7 @@ class MyUser(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'picture_id']
 
-    """
-    groupID = models.ForeignKey(members, related_name='group_member', on_delete=models.CASCADE)
 
-    """
 
     def has_perm(self, perm, obj=None):
         return True
