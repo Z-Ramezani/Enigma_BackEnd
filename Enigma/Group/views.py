@@ -82,14 +82,8 @@ class CreateGroup(APIView):
 
     def post(self, request):
         serializer_data = GroupSerializer(data=request.data)
-        print(serializer_data)
-        print(type(serializer_data))
-        print("------------------------------------------------------------------")
         if serializer_data.is_valid():
             new_group = serializer_data.save()
-            print(new_group)
-            print(type(new_group))
-            print("------------------------------------------------------------------")
             group_id = new_group.id
             data = {}
             data["groupID"] = group_id
@@ -101,24 +95,14 @@ class CreateGroup(APIView):
         return Response(serializer_data.errors)
 
 class AddUserGroup(APIView):
-    permission_classes = [
-        permissions.AllowAny
-    ]
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, data):
         serializer_data = MembersSerializer(data=data)
-
         if serializer_data.is_valid():
-            print(data['emails'])
-            print("------------------------------------------------------------------")
             for emailUser in data['emails']:
                 user = MyUser.objects.get(email=emailUser)
-                print(user)
-                print(type(user))
-                print("------------------------------------------------------------------")
                 group = Group.objects.get(id=data['groupID'])
                 member = Members(groupID=group, userID=user)
-                print(member)
-                print("------------------------------------------------------------------")
                 member.save()
             return Response(status=status.HTTP_200_OK)
         #massage = {"massage":"ایمیل درست نیست"}
