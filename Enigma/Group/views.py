@@ -8,6 +8,7 @@ from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework import status
 from MyUser.models import MyUser
+from .permissions import IsGroupUser
 
 class ShowGroups(APIView):
     def post(self, request):
@@ -95,7 +96,7 @@ class CreateGroup(APIView):
         return Response(serializer_data.errors)
 
 class AddUserGroup(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated and IsGroupUser]
     def post(self, data):
         serializer_data = MembersSerializer(data=data)
         if serializer_data.is_valid():
