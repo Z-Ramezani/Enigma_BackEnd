@@ -3,7 +3,7 @@ from Group.models import Group, Members
 from buy.models import buyer, consumer
 from .serializers import MemberSerializer
 from django.shortcuts import render
-from .serializers import GroupSerializer, MembersSerializer, AmountDebtandCreditMemberSerializer
+from .serializers import GroupSerializer, MemberSerializer, AmountDebtandCreditMemberSerializer
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework import status
@@ -98,13 +98,19 @@ class CreateGroup(APIView):
 class AddUserGroup(APIView):
     permission_classes = [permissions.IsAuthenticated and IsGroupUser]
     def post(self, data):
-        serializer_data = MembersSerializer(data=data)
+        if not isinstance(data, dict):
+            data = data.data
+        serializer_data = MemberSerializer(data=data)
         if serializer_data.is_valid():
             for emailUser in data['emails']:
-                user = MyUser.objects.get(email=emailUser)
-                group = Group.objects.get(id=data['groupID'])
-                member = Members(groupID=group, userID=user)
-                member.save()
+                try:
+                    user = MyUser.objects.get(email=emailUser)
+                    group = Group.objects.get(id=data['groupID'])
+                    member = Members(groupID=group, userID=user)
+                    member.save()
+                except MyUser.DoesNotExist:
+                    return Response({'message': 'user not found.'}, status=status.HTTP_404_NOT_FOUND)
+                
             return Response(status=status.HTTP_200_OK)
         #massage = {"massage":"ایمیل درست نیست"}
         #return Response(status=status.HTTP_400_BAD_REQUEST, data=massage)

@@ -1,18 +1,16 @@
 from rest_framework.permissions import BasePermission
 from MyUser.models import MyUser
-from myapp.models import Group, Members
+from .models import Group, Members
 
 
 
 class IsGroupUser(BasePermission):
     def has_permission(self, request, view):
-
+        print("--------------------------------------------------------------------------------")
         is_group_member = False
-        user = request.user
-        group = Group.objects.get(request.data.groupID)
-        members = Members.objects.filter(userID=user, groupID=group)
+        members = Members.objects.filter(userID=request.user, groupID=request.data['groupID'])
         if members:
-            is_group_member = True   
+            is_group_member = True 
         return request.user and request.user.is_authenticated and is_group_member
 
 
