@@ -126,15 +126,6 @@ class AddUserGroup(APIView):
         return Response(serializer_data.errors)
 
 
-class DeleteGroup(APIView):
-    permission_classes = [
-        permissions.AllowAny
-    ]
-    serializer_class = GroupSerializer
-
-    def post(self, request):
-        Group.objects.filter(groupID=request.data['id']).delete()
-        return Response(status=status.HTTP_200_OK)
     
 class AmountofDebtandCredit(APIView):
     permission_classes = [
