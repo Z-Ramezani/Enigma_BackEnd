@@ -55,5 +55,6 @@ class MyUser(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return True
+    
     def get_is_staff(self):
         return self.is_staff

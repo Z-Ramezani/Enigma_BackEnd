@@ -1,3 +1,5 @@
+from operator import mod
+from statistics import mode
 from django.db import models
 from Group.models import Group
 from MyUser.models import MyUser
@@ -7,7 +9,6 @@ class buy(models.Model):
 
     groupID = models.ForeignKey(
         Group, related_name='groupID', on_delete=models.CASCADE)
-
     
     description: models.TextField(max_length=100)
     cost = models.BigIntegerField()
