@@ -9,7 +9,7 @@ class Group(models.Model):
     currency = models.CharField(max_length=100, default="تومان")
 
 
-class members(models.Model):
+class Members(models.Model):
     groupID = models.ForeignKey(
         Group, related_name='group', on_delete=models.CASCADE)
 

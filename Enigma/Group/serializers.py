@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import MyUser, Group, members
+from .models import MyUser, Group, Members
 
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,5 +17,10 @@ class MemberSerializer(serializers.ModelSerializer):
     userID = MyUserSerializer(read_only=True)
 
     class Meta:
-        model = members
+        model = Members
         fields = '__all__'
+
+class AmountDebtandCreditMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = "__all__"
