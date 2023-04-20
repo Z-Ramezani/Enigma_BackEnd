@@ -24,6 +24,10 @@ class CreateGroup(APIView):
             print(type(new_group))
             print("------------------------------------------------------------------")
             group_id = new_group.id
+            data = {}
+            data["groupID"] = group_id
+            data["emails"] = request.data['emails']
+            AddUserGroup(data=data)
             return Response(group_id)
         return Response(serializer_data.errors)
 
