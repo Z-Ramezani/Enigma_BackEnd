@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from Group.models import Group, members
+from Group.models import Group, Members
 from Group.serializers import GroupSerializer
 from rest_framework import status
 from .serializers import MemberSerializer
@@ -11,7 +11,7 @@ class ShowMembers(APIView):
         try:
             group_id = request.data.get('groupID')
             group = Group.objects.get(id=group_id)
-            member = members.objects.filter(groupID=group)
+            member = Members.objects.filter(groupID=group)
             serializer = MemberSerializer(member, many=True)
                                       # Update each member's cost
             #for member in serializer.data:
