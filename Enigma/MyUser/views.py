@@ -20,6 +20,7 @@ class RegisterUsers(CreateAPIView):
         permissions.AllowAny
     ]
     serializer_class = MyUserSerializer
+
 """
 class ChangePasswordView(generics.UpdateAPIView):
 
@@ -40,9 +41,6 @@ class EditProfile(UpdateAPIView):
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
     
-
-
-
 
 class UserInfo(APIView):
     permission_classes = [permissions.IsAuthenticated]

@@ -78,9 +78,7 @@ def DebtandCredit(member_id):
             return  (sum)
 
 class CreateGroup(APIView):
-    permission_classes = [
-        permissions.AllowAny
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
         serializer_data = GroupSerializer(data=request.data)
