@@ -6,6 +6,18 @@ from Group.serializers import GroupSerializer
 from rest_framework import status
 from .serializers import MemberSerializer, AmountDebtandCreditMemberSerializer
 
+class ShowGroups(APIView):
+    def post(self, request):
+        try:
+            user_id = request.data.get('userID')
+            user_groups = Members.objects.filter(userID=user_id).values_list('groupID', flat=True)
+            groups = Group.objects.filter(pk__in=user_groups)
+            group_list = [{'name': group.name, 'currency': group.currency} for group in groups]
+            return Response({'groups': group_list})
+        except Members.DoesNotExist:
+            return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ShowMembers(APIView):
     def post(self, request):
