@@ -20,12 +20,13 @@ class RegisterUsers(CreateAPIView):
         permissions.AllowAny
     ]
     serializer_class = MyUserSerializer
-
+"""
 class ChangePasswordView(generics.UpdateAPIView):
 
     queryset = get_user_model().objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = ChangePasswordSerializer
+"""
 
 class EditProfile(UpdateAPIView):
     

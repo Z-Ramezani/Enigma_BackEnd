@@ -59,4 +59,4 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ("name", "password", "picture_id")
+        fields = ("name", "picture_id")
