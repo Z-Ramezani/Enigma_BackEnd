@@ -94,26 +94,28 @@ class CreateGroup(APIView):
             data = {}
             data["groupID"] = group_id
             data["emails"] = request.data['emails']
-            AddUserGroup(data=data)
-            return Response(group_id)
+            data["emails"].append(str(self.request.user.email))
+            print(data)
+            AddUserGroup.post(self = self, data=data)
+            return Response(status=status.HTTP_201_CREATED)
         return Response(serializer_data.errors)
 
 class AddUserGroup(APIView):
     permission_classes = [
         permissions.AllowAny
     ]
-    def post(self, request):
-        serializer_data = MembersSerializer(data=request.data)
+    def post(self, data):
+        serializer_data = MembersSerializer(data=data)
 
         if serializer_data.is_valid():
-            print(request.data['emails'])
+            print(data['emails'])
             print("------------------------------------------------------------------")
-            for emailUser in request.data['emails']:
+            for emailUser in data['emails']:
                 user = MyUser.objects.get(email=emailUser)
                 print(user)
                 print(type(user))
                 print("------------------------------------------------------------------")
-                group = Group.objects.get(id=request.data['groupID'])
+                group = Group.objects.get(id=data['groupID'])
                 member = Members(groupID=group, userID=user)
                 print(member)
                 print("------------------------------------------------------------------")
