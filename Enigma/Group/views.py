@@ -1,10 +1,23 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from Group.models import Group, Members
+from buy.models import buyer, consumer
 from Group.serializers import GroupSerializer
 from rest_framework import status
 from .serializers import MemberSerializer
 
+class ShowGroups(APIView):
+    def post(self, request):
+        try:
+            user_id = request.data.get('userID')
+            user_groups = Members.objects.filter(userID=user_id).values_list('groupID', flat=True)
+            groups = Group.objects.filter(pk__in=user_groups)
+            group_list = [{'id': group.id, 'name': group.name, 'currency': group.currency} for group in groups]
+            return Response({'groups': group_list})
+        except Members.DoesNotExist:
+            return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ShowMembers(APIView):
     def post(self, request):
@@ -14,12 +27,11 @@ class ShowMembers(APIView):
             member = Members.objects.filter(groupID=group)
             serializer = MemberSerializer(member, many=True)
                                       # Update each member's cost
-            #for member in serializer.data:
-                #member_id = member['id']
+            for member in serializer.data:
+                member_id = member['id']
                                        # Call dobet function to get cost for this member
-                #cost = dobet(member_id)
-                #member['cost'] = cost
-
+                cost = DebtandCredit(member_id)
+                member['cost'] = cost
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
             return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
@@ -50,3 +62,14 @@ class DeleteGroup(APIView):
             return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def DebtandCredit(member_id):
+            list_buyer = buyer.objects.filter(userID = member_id)
+            list_consumer = consumer.objects.filter(userID = member_id)
+            sum = 0
+            for buy in list_buyer:
+                sum += buy.percent            
+            for buy in list_consumer:
+                sum -= buy.percent
+            return  (sum)
