@@ -34,20 +34,12 @@ class EditProfile(UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return self.request.user.profile
+        return self.request.user
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user)
     
-    # def put(self, request, pk):
-    #     user = MyUser.objects.filter(pk = pk)
-    #     self.check_object_permissions(request, user)
-    #     print(user)
-    #     print("------------------------------------------------------------------------")
-    #     edit_profile = {}
-    #     edit_profile['username'] = user.username
-    #     edit_profile['password'] = user.password
-    #     edit_profile['picture_id'] = user.picture_id
+
 
 
 
