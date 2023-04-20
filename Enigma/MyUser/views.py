@@ -44,14 +44,15 @@ class EditProfile(UpdateAPIView):
 
 
 class UserInfo(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
         try:
-            user_id = request.data.get('userID')
-            user = MyUser.objects.get(user_id=user_id)
+            
+            user = self.request.user
             user_info = {
                 'user_id': user.user_id,
                 'email': user.email,
-                'username': user.username,
+                'name': user.name,
                 'picture_id': user.picture_id,
                 'is_active': user.is_active,
                 'is_admin': user.is_admin,
