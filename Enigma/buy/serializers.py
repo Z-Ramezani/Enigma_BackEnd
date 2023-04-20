@@ -43,19 +43,16 @@ class MyUserSerializer(serializers.ModelSerializer):
         fields = ['username', 'picture_id']
 
 
-class BuyerSerializer(serializers.ModelSerializer):
+class BuyerSerializer(serializers.ModelSerializer): 
     userID = MyUserSerializer()
 
-class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = buyer
         fields = ['userID', 'percent']
 
-
 class ConsumerSerializer(serializers.ModelSerializer):
     userID = MyUserSerializer()
 
-class ConsumerSerializer(serializers.ModelSerializer):
     class Meta:
         model = consumer
         fields = ['userID', 'percent']
@@ -66,6 +63,5 @@ class BuySerializer(serializers.ModelSerializer):
     consumers = ConsumerSerializer(many=True, read_only=True)
 
     class Meta:
-        model = buy
-        fields = ['cost', 'date', 'picture_id',
-                  'added_by', 'Buyers', 'consumers']
+        model = buyer
+        fields = ['userID', 'percent']
