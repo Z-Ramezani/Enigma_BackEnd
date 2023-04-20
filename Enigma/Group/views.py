@@ -4,7 +4,7 @@ from Group.models import Group, Members
 from buy.models import buyer, consumer
 from Group.serializers import GroupSerializer
 from rest_framework import status
-from .serializers import MemberSerializer, AmountDebtandCreditMemberSerializer
+from .serializers import MemberSerializer
 
 class ShowGroups(APIView):
     def post(self, request):
@@ -12,7 +12,7 @@ class ShowGroups(APIView):
             user_id = request.data.get('userID')
             user_groups = Members.objects.filter(userID=user_id).values_list('groupID', flat=True)
             groups = Group.objects.filter(pk__in=user_groups)
-            group_list = [{'name': group.name, 'currency': group.currency} for group in groups]
+            group_list = [{'id': group.id, 'name': group.name, 'currency': group.currency} for group in groups]
             return Response({'groups': group_list})
         except Members.DoesNotExist:
             return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
