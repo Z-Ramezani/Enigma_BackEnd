@@ -31,7 +31,6 @@ class ShowMembers(APIView):
                 member_id = member['id']
                                        # Call dobet function to get cost for this member
                 cost = DebtandCredit(member_id)
-
                 member['cost'] = cost
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Group.DoesNotExist:
@@ -66,15 +65,11 @@ class DeleteGroup(APIView):
 
 
 def DebtandCredit(member_id):
-
             list_buyer = buyer.objects.filter(userID = member_id)
             list_consumer = consumer.objects.filter(userID = member_id)
-
             sum = 0
             for buy in list_buyer:
-                sum += buy.percent
-            
+                sum += buy.percent            
             for buy in list_consumer:
                 sum -= buy.percent
-
             return  (sum)
