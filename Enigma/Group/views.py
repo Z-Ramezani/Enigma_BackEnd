@@ -11,13 +11,11 @@ from MyUser.models import MyUser
 from .permissions import IsGroupUser
 
 class ShowGroups(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
         try:
-            user_id = request.data.get('userID')
-            user_groups = Members.objects.filter(userID=user_id).values_list('groupID', flat=True)
-            groups = Group.objects.filter(pk__in=user_groups)
-            group_list = [{'id': group.id, 'name': group.name, 'currency': group.currency} for group in groups]
-            return Response({'groups': group_list})
+            user_groups = Members.objects.filter(userID=self.request.user.user_id)
+            return Response(user_groups.values())
         except Members.DoesNotExist:
             return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
