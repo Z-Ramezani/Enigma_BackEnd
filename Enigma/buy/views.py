@@ -3,34 +3,30 @@ from rest_framework.views import APIView
 from rest_framework import status
 from buy.models import buy
 from buy.serializers import BuySerializer
-
 from rest_framework import permissions
 from rest_framework.views import APIView
-
+from rest_framework.generics import CreateAPIView
 from buy.models import buy
-from buy.serializers import BuySerializer
+from buy.serializers import BuySerializer, CreateBuySerializer, BuyListSerializer
+from Group.permissions import IsGroupUser
 
-class CreateBuy(APIView):
-    permission_classes = [
-        permissions.AllowAny
-    ]
 
-    def post(self, request):
-        serializer_data = BuySerializer(data=request.data)
-        print(serializer_data)
-        print(type(serializer_data))
-        print("------------------------------------------------------------------")
-        if serializer_data.is_valid():
-            new_buy = serializer_data.save()
-            print(new_buy)
-            print(type(new_buy))
-            print("------------------------------------------------------------------")
-            buy_id = new_buy.id
-            data = {}
-            
-            return Response(buy_id)
-        return Response(serializer_data.errors)
 
+class CreateBuyView(CreateAPIView):
+    serializer_class = CreateBuySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        print("self.request.user",self.request.user )
+        return serializer.save(added_by=self.request.user)
+
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        instance_serializer = BuyListSerializer(instance)
+        return Response(instance_serializer.data)
 
 class GetGroupBuys(APIView):
 

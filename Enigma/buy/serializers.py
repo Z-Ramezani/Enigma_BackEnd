@@ -43,16 +43,16 @@ class MyUserSerializer(serializers.ModelSerializer):
         fields = ['username', 'picture_id']
 
 
-class BuyerSerializer(serializers.ModelSerializer): 
-    userID = MyUserSerializer()
+# class BuyerSerializer(serializers.ModelSerializer): 
+#     userID = MyUserSerializer()
 
 class BuyerSerializer(serializers.ModelSerializer):
     class Meta:
         model = buyer
         fields = ['userID', 'percent']
 
-class ConsumerSerializer(serializers.ModelSerializer):
-    userID = MyUserSerializer()
+# class ConsumerSerializer(serializers.ModelSerializer):
+#     userID = MyUserSerializer()
 
 class ConsumerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -67,3 +67,43 @@ class BuySerializer(serializers.ModelSerializer):
     class Meta:
         model = buyer
         fields = ['userID', 'percent']
+
+class CreateBuySerializer(serializers.ModelSerializer):
+    buyers = BuyerSerializer(many=True)
+    consumers = ConsumerSerializer(many=True)  
+
+    class Meta:
+        model = buy
+        fields = "__all__"
+    def create(self, validated_data):
+        buyers_data = validated_data.pop('buyers')
+        consumers_data = validated_data.pop('consumers')
+        print(validated_data)
+        print("---------------------------------------------")
+        buy_instance = buy.objects.create(**validated_data)
+       
+        print(buy_instance)
+        print("---------------------------------------------")
+        for buyer_data in buyers_data:
+            buyer_instance = buyer.objects.create(buy=buy_instance, **buyer_data)
+            print(buyer_instance)
+            print("---------------------------------------------")
+
+
+        for consumer_data in consumers_data:
+            consumer_instance = consumer.objects.create(buy=buy_instance, **consumer_data)
+            print(consumer_instance)
+            print("---------------------------------------------")
+
+        print("before return")
+        print(dir(buy_instance))
+        print("---------------------------------------------")
+        return buy_instance
+
+class BuyListSerializer(serializers.ModelSerializer):
+    buyers = BuyerSerializer(many=True, required=False)
+    consumers = ConsumerSerializer(many=True, required=False)  
+
+    class Meta:
+        model = buy
+        fields="__all__"
