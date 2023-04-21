@@ -26,7 +26,7 @@
 
 
 from rest_framework import serializers
-from Group.models import Group
+from Group.models import Group, Members
 from MyUser.models import MyUser
 from .models import buy, buyer, consumer
 
@@ -78,27 +78,37 @@ class CreateBuySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         buyers_data = validated_data.pop('buyers')
         consumers_data = validated_data.pop('consumers')
-        print(validated_data)
-        print("---------------------------------------------")
+
         buy_instance = buy.objects.create(**validated_data)
-       
-        print(buy_instance)
-        print("---------------------------------------------")
+
         for buyer_data in buyers_data:
             buyer_instance = buyer.objects.create(buy=buy_instance, **buyer_data)
-            print(buyer_instance)
-            print("---------------------------------------------")
 
 
         for consumer_data in consumers_data:
             consumer_instance = consumer.objects.create(buy=buy_instance, **consumer_data)
-            print(consumer_instance)
-            print("---------------------------------------------")
-
-        print("before return")
-        print(dir(buy_instance))
-        print("---------------------------------------------")
         return buy_instance
+    def validate(self, data):
+        print(self.initial_data)
+        buyers_data = self.initial_data.get('buyers')
+        consumers_data = self.initial_data.get('consumers')
+        group_id = self.initial_data.get('groupID')
+
+        for buyer in buyers_data:
+            print(buyer)
+            user_id = buyer['userID']
+            print(user_id)
+            member = Members.objects.filter(groupID_id=group_id, userID_id=user_id).exists()
+            if not member:
+                raise serializers.ValidationError(f"Buyer with group ID {group_id} and user ID {user_id} is not a member of the group")
+
+        for consumer in consumers_data:
+            user_id = consumer['userID']
+            member = Members.objects.filter(groupID_id=group_id, userID_id=user_id).exists()
+            if not member:
+                raise serializers.ValidationError(f"Consumer with group ID {group_id} and user ID {user_id} is not a member of the group")
+
+        return data
 
 class BuyListSerializer(serializers.ModelSerializer):
     buyers = BuyerSerializer(many=True, required=False)

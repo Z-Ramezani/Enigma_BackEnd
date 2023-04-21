@@ -14,10 +14,10 @@ from Group.permissions import IsGroupUser
 
 class CreateBuyView(CreateAPIView):
     serializer_class = CreateBuySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated and IsGroupUser]
 
     def perform_create(self, serializer):
-        print("self.request.user",self.request.user )
+
         return serializer.save(added_by=self.request.user)
 
 
