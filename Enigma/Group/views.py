@@ -10,71 +10,6 @@ from rest_framework import status
 from MyUser.models import MyUser
 from .permissions import IsGroupUser
 
-class ShowGroups(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    def post(self, request):
-        try:
-            user_groups = Members.objects.filter(userID=self.request.user.user_id)
-            return Response(user_groups.values())
-        except Members.DoesNotExist:
-            return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class ShowMembers(APIView):
-    def post(self, request):
-        try:
-            group_id = request.data.get('groupID')
-            group = Group.objects.get(id=group_id)
-            member = Members.objects.filter(groupID=group)
-            serializer = MemberSerializer(member, many=True)
-                                      # Update each member's cost
-            for member in serializer.data:
-                member_id = member['id']
-                                       # Call dobet function to get cost for this member
-                cost = DebtandCredit(member_id)
-                member['cost'] = cost
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Group.DoesNotExist:
-            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-class GroupInfo(APIView):
-    def post(self, request):
-        try:
-            group_id = request.data.get('groupID')
-            group = Group.objects.get(id=group_id)
-            serializer = GroupSerializer(group)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Group.DoesNotExist:
-            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-class DeleteGroup(APIView):
-
-    def post(self, request):
-        try:
-            dele = Group.objects.filter(id=request.data['groupID']).delete()
-            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
-        except Group.DoesNotExist:
-            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def DebtandCredit(member_id):
-            list_buyer = buyer.objects.filter(userID = member_id)
-            list_consumer = consumer.objects.filter(userID = member_id)
-            sum = 0
-            for buy in list_buyer:
-                sum += buy.percent            
-            for buy in list_consumer:
-                sum -= buy.percent
-            return  (sum)
 
 class CreateGroup(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -110,27 +45,67 @@ class AddUserGroup(APIView):
                     return Response({'message': 'user not found.'}, status=status.HTTP_404_NOT_FOUND)
                 
             return Response(status=status.HTTP_200_OK)
-        #massage = {"massage":"ایمیل درست نیست"}
-        #return Response(status=status.HTTP_400_BAD_REQUEST, data=massage)
         return Response(serializer_data.errors)
 
+class ShowGroups(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+        try:
+            user_groups = Members.objects.filter(userID=self.request.user.user_id)
+            return Response(user_groups.values())
+        except Members.DoesNotExist:
+            return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ShowMembers(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+        try:
+            members = Members.objects.filter(groupID=request.data['groupID'])
+            data = {}
+            show_member = {}
+            show_members = []
+
+            for member in members:
+                data['userID'] = member.userID.user_id
+                data['groupID'] = request.data['groupID']
+                cost = AmountofDebtandCredit.post(self=self, data=data)
+                show_member['nema'] = member.userID.name
+                show_member['cost'] = cost.data
+                show_members.append(show_member)
+
+            return Response(show_members, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class GroupInfo(APIView):
+    def post(self, request):
+        try:
+            group_id = request.data.get('groupID')
+            group = Group.objects.get(id=group_id)
+            serializer = GroupSerializer(group)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     
 class AmountofDebtandCredit(APIView):
-    permission_classes = [
-        permissions.AllowAny
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request):
-        serializer_data = AmountDebtandCreditMemberSerializer(data=request.data)
+    def post(self, data):
+        if not isinstance(data, dict):
+            data = data.data
+        serializer_data = AmountDebtandCreditMemberSerializer(data=data)
+        print(serializer_data)
         if serializer_data.is_valid():
-            list_buyer = buyer.objects.filter(userID = request.data['userID'])
-            list_consumer = consumer.objects.filter(userID = request.data['userID'])
-
-            print(list_buyer)
-            print("_______________________________________________________")
-            print(list_consumer)
-            print("_______________________________________________________")
+            list_buyer = buyer.objects.filter(userID = data['userID'])
+            list_consumer = consumer.objects.filter(userID = data['userID'])
 
             sum = 0
             for buy in list_buyer:
@@ -141,7 +116,29 @@ class AmountofDebtandCredit(APIView):
 
             return Response(sum)
         return Response(serializer_data.errors)
+    
 
+class DeleteGroup(APIView):
+
+    def post(self, request):
+        try:
+            dele = Group.objects.filter(id=request.data['groupID']).delete()
+            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# def DebtandCredit(member_id):
+#             list_buyer = buyer.objects.filter(userID = member_id)
+#             list_consumer = consumer.objects.filter(userID = member_id)
+#             sum = 0
+#             for buy in list_buyer:
+#                 sum += buy.percent            
+#             for buy in list_consumer:
+#                 sum -= buy.percent
+#             return  (sum)
 
 
 
