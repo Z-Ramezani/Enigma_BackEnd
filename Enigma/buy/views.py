@@ -4,9 +4,7 @@ from rest_framework import status
 from buy.models import buy
 from buy.serializers import BuySerializer
 from rest_framework import permissions
-from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
-from buy.models import buy
 from buy.serializers import BuySerializer, CreateBuySerializer, BuyListSerializer
 from Group.permissions import IsGroupUser
 
@@ -29,18 +27,19 @@ class CreateBuyView(CreateAPIView):
         return Response(instance_serializer.data)
 
 class GetGroupBuys(APIView):
+    permission_classes = [permissions.IsAuthenticated and IsGroupUser]
 
     def post(self, request):
-        perch = buy.objects.filter(
-            groupID=request.data['groupID'])
+
+        perch = buy.objects.filter(groupID=request.data['groupID'])
         perchase = BuySerializer(perch, many=True)
         return Response(perchase.data)
 
 class UserGroupBuys(APIView):
     def post(self, request):
         try:
-            user_id = request.data.get('userID')
             group_id = request.data.get('groupID')
+            user_id =self.request.user.user_id
 
             # Get buys where the user is a buyer
             buyer_buys = buy.objects.filter(

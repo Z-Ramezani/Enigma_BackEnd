@@ -1,8 +1,6 @@
 from rest_framework.response import Response
 from Group.models import Group, Members
 from buy.models import buyer, consumer
-from .serializers import MemberSerializer
-from django.shortcuts import render
 from .serializers import GroupSerializer, MemberSerializer, AmountDebtandCreditMemberSerializer
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -70,7 +68,7 @@ class ShowMembers(APIView):
                 data['userID'] = member.userID.user_id
                 data['groupID'] = request.data['groupID']
                 cost = AmountofDebtandCredit.post(self=self, data=data)
-                show_member['nema'] = member.userID.name
+                show_member['name'] = member.userID.name
                 show_member['cost'] = cost.data
                 show_members.append(show_member)
 
@@ -132,18 +130,6 @@ class DeleteGroup(APIView):
             except:
                 return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
-
-
-# def DebtandCredit(member_id):
-#             list_buyer = buyer.objects.filter(userID = member_id)
-#             list_consumer = consumer.objects.filter(userID = member_id)
-#             sum = 0
-#             for buy in list_buyer:
-#                 sum += buy.percent            
-#             for buy in list_consumer:
-#                 sum -= buy.percent
-#             return  (sum)
-
 
 
 
