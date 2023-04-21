@@ -1,34 +1,38 @@
-# from rest_framework import serializers
-# from buy.models import buyer, consumer, buy
-
-
-# class buyerSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = buyer
-#         fields = "__all__"
-
-
-# class consumerSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = consumer
-#         fields = "__all__"
-
-
-# class buySerializer(serializers.ModelSerializer):
-#     buyers = buyerSerializer(many=True, read_only=True)
-#     consumers = consumerSerializer(many=True, read_only=True)
-
-#     class Meta:
-#         model = buy
-#         fields = "__all__"
-
-
+from rest_framework import serializers
 from rest_framework import serializers
 from Group.models import Group
 from MyUser.models import MyUser
 from .models import buy, buyer, consumer
+
+
+class buyerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = buyer
+        fields = "__all__"
+    
+    def create(self, validated_data):
+        new_buyer = buyer.objects.create(**validated_data)
+        print(new_buyer)
+        print("-------------------------------------------------")
+        return new_buyer
+
+
+class consumerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = consumer
+        fields = "__all__"
+    
+    def create(self, validated_data):
+        new_consumer = consumer.objects.create(**validated_data)
+        print(new_consumer)
+        print("-------------------------------------------------")
+        return new_consumer
+
+
+class buySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = buy
+        fields = "__all__"
 
 
 class GroupSerializer(serializers.ModelSerializer):

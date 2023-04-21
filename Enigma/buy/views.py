@@ -1,35 +1,54 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
-from buy.models import buy
-from buy.serializers import BuySerializer
-
 from rest_framework import permissions
 from rest_framework.views import APIView
+from .models import buy
+from .serializers import BuySerializer, buySerializer, buyerSerializer, consumerSerializer
+from MyUser.models import MyUser
 
-from buy.models import buy
-from buy.serializers import BuySerializer
 
 class CreateBuy(APIView):
-    permission_classes = [
-        permissions.AllowAny
-    ]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        serializer_data = BuySerializer(data=request.data)
-        print(serializer_data)
-        print(type(serializer_data))
-        print("------------------------------------------------------------------")
-        if serializer_data.is_valid():
-            new_buy = serializer_data.save()
-            print(new_buy)
-            print(type(new_buy))
-            print("------------------------------------------------------------------")
+        serializer_data_buy = buySerializer(data=request.data)
+
+        if serializer_data_buy.is_valid():
+            new_buy = serializer_data_buy.save()
             buy_id = new_buy.id
             data = {}
+            data['buy'] = new_buy
+
+            list_buyer = request.data['buyer']
+            list_consumer = request.data['consumer']
+
+            for buyer in list_buyer:
+                user = MyUser.objects.get(name=buyer['name'], picture_id=buyer['picture_id'])
+                data['userID'] = user
+                data['percent'] = buyer['cost']
+                print(data)
+                print("-----------------------------------------------------")
+                serializer_data_buyer = buyerSerializer(data=data)
+
+                print(serializer_data_buyer.is_valid())
+                if serializer_data_buyer.is_valid():
+                    serializer_data_buyer.save()
+
+            for consumer in list_consumer:
+                user = MyUser.objects.get(name=consumer['name'], picture_id=consumer['picture_id'])
+                data['userID_cons'] = user
+                data['percent'] = consumer['cost']
+                print(data)
+                print("-----------------------------------------------------")
+                serializer_data_consumer = consumerSerializer(data=data)
+
+                print(serializer_data_consumer.is_valid())
+                if serializer_data_consumer.is_valid():
+                    serializer_data_consumer.save()
             
-            return Response(buy_id)
-        return Response(serializer_data.errors)
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer_data_buy.errors)
 
 
 class GetGroupBuys(APIView):
