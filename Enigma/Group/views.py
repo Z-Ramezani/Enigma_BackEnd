@@ -23,7 +23,6 @@ class CreateGroup(APIView):
             data["groupID"] = group_id
             data["emails"] = request.data['emails']
             data["emails"].append(str(self.request.user.email))
-            print(data)
             AddUserGroup.post(self = self, data=data)
             return Response(status=status.HTTP_201_CREATED)
         return Response(serializer_data.errors)
@@ -83,6 +82,8 @@ class ShowMembers(APIView):
 
 
 class GroupInfo(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         try:
             group_id = request.data.get('groupID')
@@ -119,15 +120,18 @@ class AmountofDebtandCredit(APIView):
     
 
 class DeleteGroup(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        try:
-            dele = Group.objects.filter(id=request.data['groupID']).delete()
-            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
-        except Group.DoesNotExist:
-            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        list = request.data['groupID']
+        for id in list:
+            try:
+                Group.objects.filter(id=id).delete()
+            except Group.DoesNotExist:
+                return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+            except:
+                return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
 
 
 # def DebtandCredit(member_id):
