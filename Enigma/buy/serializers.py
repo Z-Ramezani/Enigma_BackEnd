@@ -97,7 +97,8 @@ class CreateBuySerializer(serializers.ModelSerializer):
         buyers_data = self.initial_data.get('buyers')
         consumers_data = self.initial_data.get('consumers')
         group_id = self.initial_data.get('groupID')
-
+        total_buy = 0
+        total_consume = 0
         for buyer in buyers_data:
             print(buyer)
             user_id = buyer['userID']
@@ -105,13 +106,17 @@ class CreateBuySerializer(serializers.ModelSerializer):
             member = Members.objects.filter(groupID_id=group_id, userID_id=user_id).exists()
             if not member:
                 raise serializers.ValidationError(f"Buyer with group ID {group_id} and user ID {user_id} is not a member of the group")
-
+            total_buy += buyer['percent']
         for consumer in consumers_data:
             user_id = consumer['userID']
             member = Members.objects.filter(groupID_id=group_id, userID_id=user_id).exists()
             if not member:
                 raise serializers.ValidationError(f"Consumer with group ID {group_id} and user ID {user_id} is not a member of the group")
-
+            total_consume += consumer['percent']
+        if total_buy != 100:
+             raise serializers.ValidationError("The sum of percents should be 100 for buyers")
+        if total_consume != 100:
+             raise serializers.ValidationError("The sum of percents should be 100 for consumers")
         return data
 
 class BuyListSerializer(serializers.ModelSerializer):
