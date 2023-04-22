@@ -47,32 +47,42 @@ class AddUserGroup(APIView):
 class ShowGroups(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
-        try:
-            user_groups = Members.objects.filter(userID=self.request.user.user_id)
-            return Response(user_groups.values())
+        try: 
+
+            #user_groups = Members.objects.filter(userID=self.request.user.user_id)
+            #return Response(user_groups.values())
+            user_groups = Members.objects.filter(userID=self.request.user.user_id).values_list('groupID', flat=True)
+            groups = Group.objects.filter(pk__in=user_groups)
+            group_list = [{'id': group.id, 'name': group.name, 'currency': group.currency} for group in groups]
+
+            return Response({'groups': group_list})
         except Members.DoesNotExist:
             return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ShowMembers(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated and IsGroupUser]
     def post(self, request):
         try:
+            
             members = Members.objects.filter(groupID=request.data['groupID'])
             data = {}
             show_member = {}
             show_members = []
 
             for member in members:
+
                 data['userID'] = member.userID.user_id
                 data['groupID'] = request.data['groupID']
                 cost = AmountofDebtandCredit.post(self=self, data=data)
                 show_member['name'] = member.userID.name
                 show_member['cost'] = cost.data
                 show_members.append(show_member)
+                print(show_members)
 
             return Response(show_members, status=status.HTTP_200_OK)
+         
         except Group.DoesNotExist:
             return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
         except:
@@ -101,7 +111,7 @@ class AmountofDebtandCredit(APIView):
         if not isinstance(data, dict):
             data = data.data
         serializer_data = AmountDebtandCreditMemberSerializer(data=data)
-        print(serializer_data)
+        #print(serializer_data)
         if serializer_data.is_valid():
             list_buyer = buyer.objects.filter(userID = data['userID'])
             list_consumer = consumer.objects.filter(userID = data['userID'])
