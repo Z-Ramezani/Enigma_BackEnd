@@ -146,7 +146,7 @@ class BuyListSerializer(serializers.ModelSerializer):
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ['name', 'picture_id']
+        fields = ['user_id','name', 'picture_id']
 
 
 class BuyerSerializer1(serializers.ModelSerializer):

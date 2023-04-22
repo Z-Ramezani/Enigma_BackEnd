@@ -35,12 +35,6 @@ class ShowMemberSerializer(serializers.ModelSerializer):
         fields = ['id', 'userID']
 
 
-class ShowMemberSerializer2(serializers.ModelSerializer):
-    userID = MyUserSerializer(read_only=True)
-
-    class Meta:
-        model = Members
-        fields = ['id', 'userID']
 # Add_user Should change the name
 # class MembersSerializer(serializers.Serializer):
 #     emails = serializers.ListField(child=serializers.EmailField())
