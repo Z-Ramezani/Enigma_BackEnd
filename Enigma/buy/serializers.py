@@ -116,7 +116,9 @@ class CreateBuySerializer(serializers.ModelSerializer):
             if not member:
                 raise serializers.ValidationError(
                     f"Buyer with group ID {group_id} and user ID {user_id} is not a member of the group")
-            total_buy += buyer['percent']
+            if buyer['percent'] < 0:
+                raise serializers.ValidationError(
+                    f"Buyer with group ID {group_id} and user ID {user_id} should have positive value for percent!")
         for consumer in consumers_data:
             user_id = consumer['userID']
             member = Members.objects.filter(
@@ -124,13 +126,10 @@ class CreateBuySerializer(serializers.ModelSerializer):
             if not member:
                 raise serializers.ValidationError(
                     f"Consumer with group ID {group_id} and user ID {user_id} is not a member of the group")
-            total_consume += consumer['percent']
-        if total_buy != 100:
-            raise serializers.ValidationError(
-                "The sum of percents should be 100 for buyers")
-        if total_consume != 100:
-            raise serializers.ValidationError(
-                "The sum of percents should be 100 for consumers")
+            if consumer['percent'] < 0:
+                raise serializers.ValidationError(
+                    f"Consumer with group ID {group_id} and user ID {user_id} should have positive value for percent!")
+
         return data
 
 
