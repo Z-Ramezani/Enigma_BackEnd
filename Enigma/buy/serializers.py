@@ -168,8 +168,8 @@ class ConsumerSerializer1(serializers.ModelSerializer):
 class BuySerializer(serializers.ModelSerializer):
     Buyers = BuyerSerializer1(many=True, read_only=True)
     consumers = ConsumerSerializer1(many=True, read_only=True)
+    added_by = MyUserSerializer()
 
     class Meta:
         model = buy
-        fields = ['id', 'cost', 'date', 'picture_id',
-                  'added_by', 'Buyers', 'consumers']
+        fields = ['id', 'cost', 'date', 'picture_id','added_by', 'Buyers', 'consumers']
