@@ -172,4 +172,4 @@ class BuySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = buy
-        fields = ['id', 'cost', 'date', 'picture_id','added_by', 'Buyers', 'consumers']
+        fields = ['id', 'cost', 'date','description', 'picture_id','added_by', 'Buyers', 'consumers']
