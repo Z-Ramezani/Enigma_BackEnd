@@ -151,15 +151,15 @@ class DeleteGroup(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        list = request.data['groupID']
-        for id in list:
-            try:
-                Group.objects.filter(id=id).delete()
-            except Group.DoesNotExist:
-                return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-            except:
-                return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
+        id = request.data['groupID']
+        try:
+            Group.objects.filter(id=id).delete()
+            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 
 def DebtandCredit(member_id):
