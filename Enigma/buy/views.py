@@ -30,6 +30,8 @@ class GetGroupBuys(APIView):
     def post(self, request):
 
         perch = buy.objects.filter(groupID=request.data['groupID'])
+        if 'sort' in request.data:
+            perch = perch.order_by('cost')
         perchase = BuySerializer(perch, many=True)
         return Response(perchase.data)
 
@@ -42,14 +44,19 @@ class UserGroupBuys(APIView):
             group_id = request.data.get('groupID')
             if not group_id:
                 return Response({'error': 'Group ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
-            
+                            
+                # Get buys where the user is a buyer
             buyer_buys = buy.objects.filter(Buyers__userID=user_id, groupID=group_id).distinct()
-            buyer_serializer = BuySerializer(buyer_buys, many=True)
 
                 # Get buys where the user is a consumer
-            consumer_buys = buy.objects.filter(
-                    consumers__userID=user_id, groupID=group_id).distinct()
+            consumer_buys = buy.objects.filter(consumers__userID=user_id, groupID=group_id).distinct()
+
+            if 'sort' in request.data:
+                consumer_buys = consumer_buys.order_by('cost')
+                buyer_buys = buyer_buys.order_by('cost')
+
             consumer_serializer = BuySerializer(consumer_buys, many=True)
+            buyer_serializer = BuySerializer(buyer_buys, many=True)
 
             response_data = {
                     'buyer_buys': buyer_serializer.data,
