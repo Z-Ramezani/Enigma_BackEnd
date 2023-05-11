@@ -1,3 +1,5 @@
+from asyncio.windows_events import NULL
+from queue import Empty
 from rest_framework.response import Response
 from Group.models import Group, Members
 from buy.models import buyer, consumer
@@ -53,19 +55,21 @@ class ShowGroups(APIView):
     def post(self, request):
         try:
 
-            #user_groups = Members.objects.filter(userID=self.request.user.user_id)
-            # return Response(user_groups.values())
+
             user_groups = Members.objects.filter(
                 userID=self.request.user.user_id).values_list('groupID', flat=True)
             groups = Group.objects.filter(pk__in=user_groups)
-            group_list = [{'id': group.id, 'name': group.name,
+            groups_count = groups.count()
+
+            if groups_count>0:
+                group_list = [{'id': group.id, 'name': group.name,
                            'currency': group.currency} for group in groups]
 
-            return Response({'groups': group_list})
-        except Members.DoesNotExist:
-            return Response({'error': 'User does not belong to any groups'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'groups': group_list})
+            else:
+                return Response({'Error': "User does not belong to any groups"},status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'Error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ShowMembers(APIView):
@@ -127,7 +131,7 @@ class GroupInfo(APIView):
 
 
 class DeleteGroup(APIView):
-    permission_classes = [permissions.IsAuthenticated ]
+    permission_classes = [permissions.IsAuthenticated and IsGroupUser]
 
     def post(self, request):
         
