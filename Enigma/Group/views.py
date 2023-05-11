@@ -110,7 +110,7 @@ class ShowMembers(APIView):
 
 
 class GroupInfo(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated ]
 
     def post(self, request):
         try:
@@ -122,6 +122,37 @@ class GroupInfo(APIView):
             return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+class DeleteGroup(APIView):
+    permission_classes = [permissions.IsAuthenticated ]
+
+    def post(self, request):
+        
+        try:
+            group_id = request.data.get('groupID')
+            group = Group.objects.get(id=group_id)
+            group.delete()
+            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+def DebtandCredit(member_id):
+    list_buyer = buyer.objects.filter(userID=member_id)
+    list_consumer = consumer.objects.filter(userID=member_id)
+    sum = 0
+    for buy in list_buyer:
+        sum += buy.percent
+    for buy in list_consumer:
+        sum -= buy.percent
+    return (sum)
+
 
 
 class AmountofDebtandCredit(APIView):
@@ -145,33 +176,6 @@ class AmountofDebtandCredit(APIView):
 
             return Response(sum)
         return Response(serializer_data.errors)
-
-
-class DeleteGroup(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request):
-        id = request.data['groupID']
-        try:
-            Group.objects.filter(id=id).delete()
-            return Response({'message': 'Group deleted successfully.'}, status=status.HTTP_200_OK)
-        except Group.DoesNotExist:
-            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
-        except:
-            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
-
-
-def DebtandCredit(member_id):
-    list_buyer = buyer.objects.filter(userID=member_id)
-    list_consumer = consumer.objects.filter(userID=member_id)
-    sum = 0
-    for buy in list_buyer:
-        sum += buy.percent
-    for buy in list_consumer:
-        sum -= buy.percent
-    return (sum)
-
 
 # {
 #   "name":"گروه دوستان",
