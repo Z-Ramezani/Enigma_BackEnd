@@ -96,7 +96,7 @@ class ShowMembers(APIView):
             for member in members:
                 member_id = member.userID.user_id
 
-                                       # Call dobet function to get cost for this member
+                 # Call dobet function to get cost for this member
 
 
                 cost.append(DebtandCredit(member_id)) 

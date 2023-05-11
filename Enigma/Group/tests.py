@@ -1,258 +1,43 @@
-from rest_framework.test import APITestCase
-from rest_framework import status
 
+from rest_framework.test import APITestCase, APIClient
+from rest_framework import status
 from Group.models import Group
+from Group.serializers import GroupSerializer
 from MyUser.models import MyUser
+from unittest import mock
 
 
 class GroupTest(APITestCase):
-    def test_create_group_correct(self):
-        user = MyUser.objects.get(id=1)
-        
-        response = self.client.post(
-            'http://127.0.0.1:8000/group/CreateGroup/', {
-                "name": "University Friends",
-                "description": "Zahra Nourieh Maryam",
-                "currency": "Dollar",
-                "picture_id": 1,
-                "emails": [
-                    "maryam.shafizadegan.8098@gmail.com",
-                    "miss_ramazani@yahoo.com",
-                    "nourieh110@gmail.com"
-                    ]
-            }, format='json'
-        )
-        data = response.data
+    def setUp(self):
+        self.user1 = MyUser.objects.create(email='maryam@test.local', name='maryam', password='maryam', picture_id=2)
+        self.user2 = MyUser.objects.create(email='zahra@test.local', name='zahra', password='zahra', picture_id=1)
+        self.user3 = MyUser.objects.create(email='fateme@test.local', name='fateme', password='fateme', picture_id=3)
+        self.client = APIClient()
+        self.group = Group.objects.create(name='Test Group', description= "Family", currency="تومان", picture_id=2)
+        self.valid_payload = {'groupID': self.group.id}
+        self.invalid_payload = {'groupID': 999}
 
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual('University Friends', data['name'])
-        self.assertEqual('Zahra Nourieh Maryam', data['description'])
-        self.assertEqual('Dollar', data['currency'])
-        self.assertEqual(1, data['picture_id'])
-        self.assertEqual(1, data['creator']['id'])
-        self.assertEqual('mehdi', data['creator']['username'])
-        self.assertEqual(3, len(data['emails']))
-        self.assertEqual('maryam.shafizadegan.8098@gmail.com', data['emails'][0])
-        self.assertEqual('miss_ramazani@yahoo.com', data['emails'][1])
-        self.assertEqual('nourieh110@gmail.com', data['emails'][2])
-
-        # self.assertTrue(data['is_public'])
-        # self.assertTrue(data['is_commentable'])
-        # self.assertTrue(data['is_vote_retractable'])
-        # self.assertEqual('', data['attached_http_link'])
-
-    def test_create_group_name_is_null(self):
-            user = MyUser.objects.get(id=1)
-            
-            response = self.client.post(
-                'http://127.0.0.1:8000/group/CreateGroup/', {
-                    "name": "",
-                    "description": "Zahra Nourieh Maryam",
-                    "currency": "Dollar",
-                    "picture_id": 1,
-                    "emails": [
-                        "maryam.shafizadegan.8098@gmail.com",
-                        "miss_ramazani@yahoo.com",
-                        "nourieh110@gmail"
-                        ]
-                }, format='json'
-            )
-            data = response.data
-
-            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-            self.assertEqual('University Friends', data['name'])
-
-    def test_create_group_name_is_space(self):
-            user = MyUser.objects.get(id=1)
-            
-            response = self.client.post(
-                'http://127.0.0.1:8000/group/CreateGroup/', {
-                    "name": "    ",
-                    "description": "Zahra Nourieh Maryam",
-                    "currency": "Dollar",
-                    "picture_id": 1,
-                    "emails": [
-                        "maryam.shafizadegan.8098@gmail.com",
-                        "miss_ramazani@yahoo.com",
-                        "nourieh110@gmail"
-                        ]
-                }, format='json'
-            )
-            data = response.data
-
-            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-            self.assertEqual('University Friends', data['name'])
-
-    def test_create_group_description_is_null(self):
-            user = MyUser.objects.get(id=1)
-            
-            response = self.client.post(
-                'http://127.0.0.1:8000/group/CreateGroup/', {
-                    "name": "",
-                    "description": "Zahra Nourieh Maryam",
-                    "currency": "Dollar",
-                    "picture_id": 1,
-                    "emails": [
-                        "maryam.shafizadegan.8098@gmail.com",
-                        "miss_ramazani@yahoo.com",
-                        "nourieh110@gmail"
-                        ]
-                }, format='json'
-            )
-            data = response.data
-
-            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-            self.assertEqual('Zahra Nourieh Maryam', data['description'])
-
-    def test_create_group_currency_is_null(self):
-            user = MyUser.objects.get(id=1)
-            
-            response = self.client.post(
-                'http://127.0.0.1:8000/group/CreateGroup/', {
-                    "name": "",
-                    "description": "Zahra Nourieh Maryam",
-                    "currency": "Dollar",
-                    "picture_id": 1,
-                    "emails": [
-                        "maryam.shafizadegan.8098@gmail.com",
-                        "miss_ramazani@yahoo.com",
-                        "nourieh110@gmail"
-                        ]
-                }, format='json'
-            )
-            data = response.data
-
-            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-            self.assertEqual('Dollar', data['currency'])
-
-    def test_create_group_pictureID_is_zero(self):
-            user = MyUser.objects.get(id=1)
-            
-            response = self.client.post(
-                'http://127.0.0.1:8000/group/CreateGroup/', {
-                    "name": "",
-                    "description": "Zahra Nourieh Maryam",
-                    "currency": "Dollar",
-                    "picture_id": 0,
-                    "emails": [
-                        "maryam.shafizadegan.8098@gmail.com",
-                        "miss_ramazani@yahoo.com",
-                        "nourieh110@gmail"
-                        ]
-                }, format='json'
-            )
-            data = response.data
-
-            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-            self.assertEqual(1, data['picture_id'])
+    def test_post_with_valid_payload(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.post('/group/GroupInfo/', self.valid_payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serializer = GroupSerializer(self.group)
+        self.assertEqual(response.data, serializer.data)
     
-    def test_create_group_pictureID_is_nagative(self):
-            user = MyUser.objects.get(id=1)
-            
-            response = self.client.post(
-                'http://127.0.0.1:8000/group/CreateGroup/', {
-                    "name": "",
-                    "description": "Zahra Nourieh Maryam",
-                    "currency": "Dollar",
-                    "picture_id": -2,
-                    "emails": [
-                        "maryam.shafizadegan.8098@gmail.com",
-                        "miss_ramazani@yahoo.com",
-                        "nourieh110@gmail"
-                        ]
-                }, format='json'
-            )
-            data = response.data
+    def test_post_with_invalid_payload(self):
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.post('/group/GroupInfo/', self.invalid_payload)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, {'message': 'Group not found.'})
 
-            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-            self.assertEqual(1, data['picture_id'])
 
-    def test_create_group_pictureID_is_more_than_values(self):
-        user = MyUser.objects.get(id=1)
-        
-        response = self.client.post(
-            'http://127.0.0.1:8000/group/CreateGroup/', {
-                "name": "",
-                "description": "Zahra Nourieh Maryam",
-                "currency": "Dollar",
-                "picture_id": 100,
-                "emails": [
-                    "maryam.shafizadegan.8098@gmail.com",
-                    "miss_ramazani@yahoo.com",
-                    "nourieh110@gmail"
-                    ]
-            }, format='json'
-        )
-        data = response.data
+    def test_post_without_authentication(self):
+        response = self.client.post('/group/GroupInfo/', self.valid_payload)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(1, data['picture_id'])
-
-    def test_create_group_not_email(self):
-        user = MyUser.objects.get(id=1)
-        
-        response = self.client.post(
-            'http://127.0.0.1:8000/group/CreateGroup/', {
-                "name": "University Friends",
-                "description": "Zahra Nourieh Maryam",
-                "currency": "Dollar",
-                "picture_id": 1,
-                "emails": [
-                    ]
-            }, format='json'
-        )
-        data = response.data
-
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(0, len(data['emails']))
-    
-    def test_create_group_invalid_email(self):
-        user = MyUser.objects.get(id=1)
-        
-        response = self.client.post(
-            'http://127.0.0.1:8000/group/CreateGroup/', {
-                "name": "University Friends",
-                "description": "Zahra Nourieh Maryam",
-                "currency": "Dollar",
-                "picture_id": 1,
-                "emails": [
-                    "maryam.shafizadegan.8098@gmail.com",
-                    "miss_ramazani@yahoo.com",
-                    "nourieh110@gmail"
-                    ]
-            }, format='json'
-        )
-        data = response.data
-
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(3, len(data['emails']))
-        self.assertEqual('maryam.shafizadegan.8098@gmail.com', data['emails'][0])
-        self.assertEqual('miss_ramazani@yahoo.com', data['emails'][1])
-        self.assertEqual('nourieh110@gmail.com', data['emails'][2])
-    
-
-    def test_create_group_valid_email_but_is_not_register(self):
-        user = MyUser.objects.get(id=1)
-        
-        response = self.client.post(
-            'http://127.0.0.1:8000/group/CreateGroup/', {
-                "name": "University Friends",
-                "description": "Zahra Nourieh Maryam",
-                "currency": "Dollar",
-                "picture_id": 1,
-                "emails": [
-                    "maryam.shafizadegan.8098@gmail.com",
-                    "miss_ramazani@yahoo.com",
-                    "ab@gmail.com"
-                    ]
-            }, format='json'
-        )
-        data = response.data
-
-        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
-        self.assertEqual(3, len(data['emails']))
-        self.assertEqual('maryam.shafizadegan.8098@gmail.com', data['emails'][0])
-        self.assertEqual('miss_ramazani@yahoo.com', data['emails'][1])
-        self.assertEqual('nourieh110@gmail.com', data['emails'][2])
-
-    
+    def test_post_with_exception(self):
+        self.client.force_authenticate(user=self.user1)
+        with mock.patch('Group.models.Group.objects.get') as mock_get:
+            mock_get.side_effect = Exception('Something went wrong')
+            response = self.client.post('/group/GroupInfo/', self.valid_payload)
+            self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
