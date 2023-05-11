@@ -77,24 +77,6 @@ class ShowMembers(APIView):
 
     def post(self, request):
         try:
-            """
-            members = Members.objects.filter(groupID=request.data['groupID'])
-            data = {}
-            show_member = {}
-            show_members = []
-
-            for member in members:
-
-                data['userID'] = member.userID.user_id
-                data['groupID'] = request.data['groupID']
-                cost = AmountofDebtandCredit.post(self=self, data=data)
-                show_member['name'] = member.userID.name
-                show_member['cost'] = cost.data
-                show_members.append(show_member)
-                print(show_members)
-                return Response(show_members, status=status.HTTP_200_OK)
-
-            """
             cost=[]
             members = Members.objects.filter(groupID=request.data['groupID'])
             for member in members:
@@ -109,8 +91,8 @@ class ShowMembers(APIView):
                 member['cost'] = cost.pop()
 
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Group.DoesNotExist:
-            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'Error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class GroupInfo(APIView):
