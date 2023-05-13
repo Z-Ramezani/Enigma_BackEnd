@@ -143,3 +143,6 @@ Traceback (most recent call last):
 AttributeError: 'str' object has no attribute 'append'
 ERROR 2023-05-13 18:59:36,912 basehttp 14068 4572 "POST /group/CreateGroup/ HTTP/1.1" 500 98375
 INFO 2023-05-13 19:00:23,051 autoreload 14068 3132 E:\uni\8\OOD\Enigma_BackEnd\Enigma\Enigma\settings.py changed, reloading.
+INFO 2023-05-14 00:12:17,583 autoreload 13032 2848 Watching for file changes with StatReloader
+INFO 2023-05-14 00:12:25,013 autoreload 13032 2848 E:\uni\8\OOD\Enigma_BackEnd\Enigma\Enigma\settings.py changed, reloading.
+INFO 2023-05-14 00:12:25,949 autoreload 16628 8300 Watching for file changes with StatReloader
