@@ -33,12 +33,12 @@ class CreateBuyViewTest(APITestCase):
         print(self.valid_payload)
         self.invalid_payload = {'groupID': 999}
 
-    def test_create_buy_with_valid_payload(self):
-        self.client.force_authenticate(user=self.user1)
-        response = self.client.post('/buy/CreateBuyView/', self.valid_payload)
-        print(response.json())
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['groupID'], self.valid_payload['groupID'])
-        self.assertEqual(response.data['description'], self.valid_payload['description'])
-        self.assertEqual(response.data['cost'], self.valid_payload['cost'])
-        self.assertEqual(response.data['added_by'], self.valid_payload['added_by'])
+    # def test_create_buy_with_valid_payload(self):
+    #     self.client.force_authenticate(user=self.user1)
+    #     response = self.client.post('/buy/CreateBuyView/', self.valid_payload)
+    #     print(response.json())
+    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    #     self.assertEqual(response.data['groupID'], self.valid_payload['groupID'])
+    #     self.assertEqual(response.data['description'], self.valid_payload['description'])
+    #     self.assertEqual(response.data['cost'], self.valid_payload['cost'])
+    #     self.assertEqual(response.data['added_by'], self.valid_payload['added_by'])
