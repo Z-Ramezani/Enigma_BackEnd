@@ -5,9 +5,6 @@ from Group.serializers import GroupSerializer
 from MyUser.models import MyUser
 from unittest import mock
 
-
-
-
 class GroupInfoTest(APITestCase):
     def setUp(self):
         self.user1 = MyUser.objects.create(email='maryam@test.local', name='maryam', password='maryam', picture_id=2)
