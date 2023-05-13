@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import MyUser
-from .serializers import MyUserSerializer, UpdateUserSerializer, ChangePasswordSerializer
+from .serializers import MyUserSerializer, UpdateUserSerializer
 from django.contrib.auth import get_user_model
 from rest_framework import permissions
 from rest_framework import generics
@@ -11,6 +11,8 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from Group.models import Members, Group
+from buy.models import buy, buyer, consumer 
 
 
 
@@ -62,3 +64,34 @@ class UserInfo(APIView):
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DeleteUser(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user_id = request.data['userID']
+            group_id = request.data['groupID']
+            if DebtandCreditforMemberinGroup(user_id, group_id) == 0:
+                Members.objects.get(groupID=group_id, userID=user_id).delete()
+                if Members.objects.filter(groupID=group_id).count() == 0:
+                    Group.objects.get(groupID=group_id).delete()
+                return Response({'message': 'User deleted successfully.'})
+            else:
+                return Response({'message': 'The settlement has not been completed'})
+        except MyUser.DoesNotExist:
+            return Response({'message': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except Group.DoesNotExist:
+            return Response({'message': 'Group not found.'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'message': 'An error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+def DebtandCreditforMemberinGroup(user_id, group_id):
+    list_buyer = buyer.objects.filter(userID=user_id, buy__groupID=group_id).distinct()
+    list_consumer = consumer.objects.filter(userID=user_id, buy__groupID=group_id).distinct()
+    sum = 0
+    for buy in list_buyer:
+        sum += buy.percent
+    for buy in list_consumer:
+        sum -= buy.percent
+    return sum
