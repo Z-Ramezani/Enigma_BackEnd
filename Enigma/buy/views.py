@@ -21,6 +21,8 @@ class CreateBuyView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
         instance = self.perform_create(serializer)
         instance_serializer = BuyListSerializer(instance)
+        print("this is to check CI/CD")
+
         return Response(instance_serializer.data)
 
 
