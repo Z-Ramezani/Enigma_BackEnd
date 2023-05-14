@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,8 +26,9 @@ SECRET_KEY = 'django-insecure-#&t%e9y+z*85#h3!@+r%lhvh%@($-t6vs_pi9ed#$8&)cf^%ck
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+#'fatemehshafiei.pythonanywhere.com'
 ALLOWED_HOSTS = []
+
 
 
 # Application definition
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'drf_yasg',
     'rest_auth.registration',
     'MyUser.apps.MyuserConfig',
     'buy.apps.BuyConfig',
@@ -153,3 +157,35 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'MyUser.MyUser'
+
+
+LOGGING ={
+    'version':1,
+    'loggers':{
+        'django':{
+            'handlers':['file','file2'],
+            'level':'DEBUG'
+        }
+    },
+    'handlers':{
+        'file':{
+            'level':'INFO',
+            'class': 'logging.FileHandler',
+            'filename':'./logs/info.log',
+            'formatter':'simpleRe',
+        },
+        'file2':{
+            'level':'ERROR',
+            'class': 'logging.FileHandler',
+            'filename':'./logs/error.log',
+            'formatter':'simpleRe',
+        }
+    },
+    'formatters':{
+        'simpleRe': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        }
+
+    }
+}

@@ -13,5 +13,4 @@ class Members(models.Model):
     groupID = models.ForeignKey(
         Group, related_name='group', on_delete=models.CASCADE)
 
-    userID = models.ForeignKey(
-        MyUser, related_name='member', on_delete=models.CASCADE, null=True)
+    userID = models.ForeignKey(MyUser, related_name='member', on_delete=models.CASCADE, null=True)

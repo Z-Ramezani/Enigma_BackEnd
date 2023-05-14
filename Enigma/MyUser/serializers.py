@@ -9,13 +9,13 @@ from django.contrib.auth.password_validation import validate_password
 class MyUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ("email", "password", "user_id","username", "picture_id")
+        fields = ("email", "password", "user_id","name", "picture_id")
     
 
     user_id = serializers.IntegerField(read_only=True)
     email = serializers.EmailField(max_length=255, required=True)
     password = serializers.CharField(write_only=True, required=True)
-    username = serializers.CharField(max_length=50, required=True)
+    name = serializers.CharField(max_length=50, required=True)
     picture_id = serializers.IntegerField(required=True)
 
    
@@ -59,4 +59,4 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyUser
-        fields = ("username", "password", "picture_id")
+        fields = ("name", "picture_id")
